@@ -1,4 +1,6 @@
-﻿namespace Wheel_of_Fortune
+﻿using System;
+
+namespace Wheel_of_Fortune
 {
     public struct Records
     {
@@ -21,9 +23,25 @@
     {
         const string FilePath = "Assets/wheelOfFortune.txt";
 
+
+        static string[] words =
+        {
+            "PROGRAMMING", "COMPUTATION", "ADVENTURES", "CHRISTCHURCH", "DEVELOPMENT",
+            "ALGORITHMS", "KEYBOARDING", "SOFTWARE ENGINEER".Replace(" ", ""), "PLAYGROUNDS", "BREAKTHROUGH",
+            "WATERMELONS", "ELEPHANTINE", "TELEVISIONS", "GOVERNMENTS", "MOUNTAINEERING"
+        };
+
+        static int[] wheel =
+        {
+            300, 350, 400, 450, 500, 600, 700, 800, 900, 1000, 1200, 1500,
+            1800, 2000, 2200, 2500, 2800, 3000, 3500, 4000, 4500, 5000,
+            -2000, -3000
+        };
+
         static void Main()
         {
             Records[] records = ReadFile();
+            int PlayerIndex = -1;
             bool running = true;
 
             while (running)
@@ -47,10 +65,10 @@
                         UpdateInterest(records);
                         break;
                     case "3":
-                        PickPeople(records);
+                        PickPeople(records, ref PlayerIndex);
                         break;
                     case "4":
-                        PlayGame(records);
+                        PlayGame(records, ref PlayerIndex);
                         break;
                     case "0":
                         running = false;
@@ -125,7 +143,7 @@
             Console.ReadLine();
         }
 
-        static void PickPeople(Records[] People)
+        static void PickPeople(Records[] People, ref int PlayerIndex)
         {
             Random rand = new Random();
             int[] Finalists = new int[10];
@@ -160,13 +178,10 @@
             }
 
             Console.WriteLine("\n\n");
-            PlayerSelected[] Player = new PlayerSelected[1];
+
             int PlayerTemp = rand.Next(Finalists.Length);
-            Player[0].Name = People[Finalists[PlayerTemp]].Name;
-            Player[0].LastName = People[Finalists[PlayerTemp]].LastName;
-            Player[0].Interest = People[Finalists[PlayerTemp]].Interest;
-            Player[0].Score = People[Finalists[PlayerTemp]].Score;
-            Console.WriteLine($"{Player[0].Name.PadRight(23)} {Player[0].LastName.PadRight(23)} {Player[0].Interest.PadRight(13)} {Convert.ToString(Player[0].Score).PadLeft(7)}");
+            PlayerIndex = Finalists[PlayerTemp];
+            Console.WriteLine($"{People[PlayerIndex].Name.PadRight(23)} {People[PlayerIndex].LastName.PadRight(23)} {People[PlayerIndex].Interest.PadRight(13)} {Convert.ToString(People[PlayerIndex].Score).PadLeft(7)}");
             Console.ReadLine ();
         }
 
@@ -198,24 +213,87 @@
             Pause();
         }
 
-        static void PlayGame(Records[] Data)
+        static void PlayGame(Records[] Data, ref int PlayerIndex)
         {
+            if (PlayerIndex == -1)
+            {
+                Console.WriteLine("Select a player first (option 3).");
+                Pause();
+                return;
+            }
+
             Random rand = new Random();
-            int PlayerIndex = rand.Next(Data.Length);
-            Records Player = Data[PlayerIndex];
-            Console.WriteLine($"Welcome {Player.Name} {Player.LastName}!");
-            Console.WriteLine($"Your interest is: {Player.Interest}");
-            Console.WriteLine($"Your current score is: {Player.Score}");
+            string word = words[rand.Next(words.Length)];
+            bool[] revealed = new bool[word.Length];
+            string guessedLetters = "";
+            int score = 0;
+
+            Records player = Data[PlayerIndex];
+            Console.WriteLine($"Welcome {player.Name} {player.LastName}!");
+            Console.WriteLine($"Your interest is: {player.Interest}");
+            Console.WriteLine($"Your current score is: {player.Score}");
             Console.WriteLine("Press [Enter] to spin the wheel...");
             Console.ReadLine();
-            int spinResult = rand.Next(1, 11); // Simulate a spin result between 1 and 10
-            Console.WriteLine($"You spun a {spinResult}!");
-            Player.Score += spinResult;
-            Console.WriteLine($"Your new score is: {Player.Score}");
+
+
+
+
+
+
+
+
+
+
+            int spin = rand.Next(1, 24);
+
+            Console.WriteLine($"Your new score is: {player.Score}");
             // Update the player's score in the original data array
-            Data[PlayerIndex].Score = Player.Score;
+            Data[PlayerIndex].Score = player.Score;
             SaveData(Data);
             Pause();
+        }
+
+
+        static bool WordComplete(bool[] revealed)
+        {
+            for (int i = 0; i < revealed.Length; i++)
+                if (!revealed[i])
+                {
+                    return false;
+                }
+            return true;
+        }
+
+
+        static string Show(string word, bool[] revealed)
+        {
+            string display = "";
+            for (int i = 0; i < word.Length; i++)
+                if (revealed[i])
+                {
+                    display += word[i] + " ";
+                }
+                else
+                {
+                    display += "_ ";
+                }
+            return display;
+        }
+
+
+        // Reveal every occurrence of letter, return how many there were
+        static int RevealLetter(string word, bool[] revealed, char letter)
+        {
+            int count = 0;
+            for (int i = 0; i < word.Length; i++)
+            {
+                if (word[i] == letter)
+                {
+                    revealed[i] = true;
+                    count++;
+                }
+            }
+            return count;
         }
     }
 }
