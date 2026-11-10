@@ -297,7 +297,6 @@ namespace Wheel_of_Fortune
                 }
             }
 
-
             Console.Clear();
             Console.WriteLine($"The word was {word}!");
             Console.WriteLine($"{Data[PlayerIndex].Name} finishes with ${score}.");
