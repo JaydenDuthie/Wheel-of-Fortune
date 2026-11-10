@@ -9,6 +9,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Program.cs.old.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="Program.cs.old.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<!-- Automatically includes all .txt files in Assets and its subfolders -->
 		<None Update="Assets\*.txt">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
