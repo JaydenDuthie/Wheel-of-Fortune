@@ -10,14 +10,6 @@ namespace Wheel_of_Fortune
         public int Score;
     }
 
-    public struct PlayerSelected
-    {
-        public string Name;
-        public string LastName;
-        public string Interest;
-        public int Score;
-    }
-
 
     internal class Program
     {
@@ -137,7 +129,7 @@ namespace Wheel_of_Fortune
         {
             for (int count = 0; count < Data.Length; count++)
             {
-                Console.WriteLine($"{Data[count].Name.PadRight(23)} {Data[count].LastName.PadRight(23)} {Data[count].Interest.PadRight(13)} {Convert.ToString(Data[count].Score).PadLeft(7)}");
+                Console.WriteLine($"{Data[count].Name.PadRight(23)} {Data[count].LastName.PadRight(23)} {Data[count].Interest.PadRight(20)} {Convert.ToString(Data[count].Score).PadLeft(10)}");
             }
             Console.WriteLine("\nPress [Enter] to continue");
             Console.ReadLine();
@@ -181,7 +173,7 @@ namespace Wheel_of_Fortune
 
             int PlayerTemp = rand.Next(Finalists.Length);
             PlayerIndex = Finalists[PlayerTemp];
-            Console.WriteLine($"{People[PlayerIndex].Name.PadRight(23)} {People[PlayerIndex].LastName.PadRight(23)} {People[PlayerIndex].Interest.PadRight(13)} {Convert.ToString(People[PlayerIndex].Score).PadLeft(7)}");
+            Console.WriteLine($"{People[PlayerIndex].Name.PadRight(23)} {People[PlayerIndex].LastName.PadRight(23)} {People[PlayerIndex].Interest.PadRight(20)} {Convert.ToString(People[PlayerIndex].Score).PadLeft(10)}");
             Console.ReadLine ();
         }
 
@@ -236,21 +228,72 @@ namespace Wheel_of_Fortune
             Console.ReadLine();
 
 
+            while (!WordComplete(revealed))
+            {
+                Console.Clear();
+                Console.WriteLine($"Player: {Data[PlayerIndex].Name} {Data[PlayerIndex].LastName}\tScore: ${score}");
+                Console.WriteLine($"\n{Show(word, revealed)}");
+                Console.WriteLine($"\nLetters used: {guessedLetters}");
+
+                // Spin the wheel
+                int spin = wheel[rand.Next(wheel.Length)];
+                if (spin < 0)
+                {
+                    score += spin;
+                    Console.WriteLine($"\nThe wheel landed on LOSE ${-spin}! Score is now ${score}.");
+                    Pause();
+                    continue;
+                }
+                Console.WriteLine($"\nThe wheel landed on ${spin}.");
+                Console.Write("Guess a letter (vowels cost $250 once each): ");
+                string input = Console.ReadLine().Trim().ToUpper();
+
+                if (input.Length != 1 || !char.IsLetter(input[0]))
+                {
+                    Console.WriteLine("Please enter a single letter. Turn lost.");
+                    Pause();
+                    continue;
+                }
+                char letter = input[0];
+
+                if (guessedLetters.Contains(letter))
+                {
+                    Console.WriteLine("You already used that letter. Turn lost.");
+                    Pause();
+                    continue;
+                }
+                guessedLetters += letter + " ";
+
+                int occurrences = RevealLetter(word, revealed, letter);
+                bool IsVowel = "AEIOU".Contains(letter);
 
 
+                if (IsVowel)
+                {
+                    score -= 250;   // flat charge, once per vowel
+                    Console.WriteLine($"{occurrences} x {letter}. Vowel costs $250.");
+                }
+                if (occurrences == 0 && !IsVowel)
+                {
+                    Console.WriteLine($"No {letter}s in the word.");
+                }
+                else
+                {
+                    int earned = spin * occurrences;
+                    score += earned;
+                    Console.WriteLine($"{occurrences} x {letter}! You earn ${earned}.");
+                }
+                Pause();
+            }
 
+            Console.Clear();
+            Console.WriteLine($"The word was {word}!");
+            Console.WriteLine($"{Data[PlayerIndex].Name} finishes with ${score}.");
 
-
-
-
-
-            int spin = rand.Next(1, 24);
-
-            Console.WriteLine($"Your new score is: {player.Score}");
-            // Update the player's score in the original data array
-            Data[PlayerIndex].Score = player.Score;
+            Data[PlayerIndex].Score = score;
             SaveData(Data);
-            Pause();
+            Console.WriteLine("Score saved to file.\n");
+//            ShowTopFive(Data);
         }
 
 
