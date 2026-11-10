@@ -227,7 +227,7 @@ namespace Wheel_of_Fortune
             Console.WriteLine("Press [Enter] to spin the wheel...");
             Console.ReadLine();
 
-
+            int spin = wheel[rand.Next(wheel.Length)];
             while (!WordComplete(revealed))
             {
                 Console.Clear();
@@ -236,7 +236,6 @@ namespace Wheel_of_Fortune
                 Console.WriteLine($"\nLetters used: {guessedLetters}");
 
                 // Spin the wheel
-                int spin = wheel[rand.Next(wheel.Length)];
                 if (spin < 0)
                 {
                     score += spin;
@@ -256,6 +255,12 @@ namespace Wheel_of_Fortune
                 }
                 char letter = input[0];
 
+
+                /*
+                - https://www.geeksforgeeks.org/c-sharp/c-sharp-string-contains-method/ - Uses the Contains method
+                - checks if a string (guessedLetters) contains a spcific character (letter)
+                - and returns a boolean value (true or false)
+                */
                 if (guessedLetters.Contains(letter))
                 {
                     Console.WriteLine("You already used that letter. Turn lost.");
@@ -265,8 +270,7 @@ namespace Wheel_of_Fortune
                 guessedLetters += letter + " ";
 
                 int occurrences = RevealLetter(word, revealed, letter);
-                bool IsVowel = "AEIOU".Contains(letter);
-
+                bool IsVowel = "AEIOU".Contains(letter);    // Uses the Contains method to check if "AEIOU" contains the letter
 
                 if (IsVowel)
                 {
