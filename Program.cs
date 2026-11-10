@@ -44,6 +44,7 @@ namespace Wheel_of_Fortune
                 Console.WriteLine("2. Update a contestant's interest");
                 Console.WriteLine("3. Generate 10 finalists");
                 Console.WriteLine("4. Play the game");
+                Console.WriteLine("5. Show top five contestants (sorted by score)");
                 Console.WriteLine("0. Exit");
                 Console.Write("\nChoose an option: ");
                 string choice = Console.ReadLine();
@@ -61,6 +62,9 @@ namespace Wheel_of_Fortune
                         break;
                     case "4":
                         PlayGame(records, ref PlayerIndex);
+                        break;
+                    case "5":
+                        TopFive(records);
                         break;
                     case "0":
                         running = false;
@@ -122,8 +126,6 @@ namespace Wheel_of_Fortune
             }
             SW.Close();
         }
-
-
 
         static void Print(Records[] Data)
         {
@@ -241,54 +243,60 @@ namespace Wheel_of_Fortune
                     score += spin;
                     Console.WriteLine($"\nThe wheel landed on LOSE ${-spin}! Score is now ${score}.");
                     Pause();
-                    continue;
-                }
-                Console.WriteLine($"\nThe wheel landed on ${spin}.");
-                Console.Write("Guess a letter (vowels cost $250 once each): ");
-                string input = Console.ReadLine().Trim().ToUpper();
-
-                if (input.Length != 1 || !char.IsLetter(input[0]))
-                {
-                    Console.WriteLine("Please enter a single letter. Turn lost.");
-                    Pause();
-                    continue;
-                }
-                char letter = input[0];
-
-
-                /*
-                - https://www.geeksforgeeks.org/c-sharp/c-sharp-string-contains-method/ - Uses the Contains method
-                - checks if a string (guessedLetters) contains a spcific character (letter)
-                - and returns a boolean value (true or false)
-                */
-                if (guessedLetters.Contains(letter))
-                {
-                    Console.WriteLine("You already used that letter. Turn lost.");
-                    Pause();
-                    continue;
-                }
-                guessedLetters += letter + " ";
-
-                int occurrences = RevealLetter(word, revealed, letter);
-                bool IsVowel = "AEIOU".Contains(letter);    // Uses the Contains method to check if "AEIOU" contains the letter
-
-                if (IsVowel)
-                {
-                    score -= 250;   // flat charge, once per vowel
-                    Console.WriteLine($"{occurrences} x {letter}. Vowel costs $250.");
-                }
-                if (occurrences == 0 && !IsVowel)
-                {
-                    Console.WriteLine($"No {letter}s in the word.");
                 }
                 else
                 {
-                    int earned = spin * occurrences;
-                    score += earned;
-                    Console.WriteLine($"{occurrences} x {letter}! You earn ${earned}.");
+                    Console.WriteLine($"\nThe wheel landed on ${spin}.");
+                    Console.Write("Guess a letter (vowels cost $250 once each): ");
+                    string input = Console.ReadLine().Trim().ToUpper();
+
+                    if (input.Length != 1 || !char.IsLetter(input[0]))  // Check if the input is a single character and is a letter
+                    {
+                        Console.WriteLine("Please enter a single letter. Turn lost.");
+                        Pause();
+                    }
+                    else
+                    {
+                        char letter = input[0];
+
+
+                        /*
+                        - https://www.geeksforgeeks.org/c-sharp/c-sharp-string-contains-method/
+                        - Uses the Contains method - checks if a string (guessedLetters) contains a spcific character (letter)
+                        - and returns a boolean value (true or false)
+                        */
+                        if (guessedLetters.Contains(letter))
+                        {
+                            Console.WriteLine("You already used that letter. Turn lost.");
+                            Pause();
+                        }
+                        else
+                        {
+                            guessedLetters += letter + " ";
+                            int occurrences = RevealLetter(word, revealed, letter);
+                            bool IsVowel = "AEIOU".Contains(letter); // Uses the Contains method to check if "AEIOU" contains the letter
+
+                            if (IsVowel)
+                            {
+                                score -= 250;
+                                Console.WriteLine($"{occurrences} x {letter}. Vowel costs $250.");
+                            }
+                            else if (occurrences != 0 && !IsVowel)
+                            {
+                                int earned = spin * occurrences;
+                                score += earned;
+                                Console.WriteLine($"{occurrences} x {letter}! You earn ${earned}.");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"No {letter}s in the word.");
+                            }
+                            Pause();
+                        }
+                    }
                 }
-                Pause();
             }
+
 
             Console.Clear();
             Console.WriteLine($"The word was {word}!");
@@ -297,7 +305,8 @@ namespace Wheel_of_Fortune
             Data[PlayerIndex].Score = score;
             SaveData(Data);
             Console.WriteLine("Score saved to file.\n");
-//            ShowTopFive(Data);
+            Pause();
+            TopFive(Data);
         }
 
 
@@ -310,7 +319,6 @@ namespace Wheel_of_Fortune
                 }
             return true;
         }
-
 
         static string Show(string word, bool[] revealed)
         {
@@ -327,7 +335,6 @@ namespace Wheel_of_Fortune
             return display;
         }
 
-
         // Reveal every occurrence of letter, return how many there were
         static int RevealLetter(string word, bool[] revealed, char letter)
         {
@@ -341,6 +348,29 @@ namespace Wheel_of_Fortune
                 }
             }
             return count;
+        }
+
+        static void TopFive(Records[] Data)
+        {
+            // Sort a copy by score (highest first) so the main array stays sorted by name
+            Records[] copy = (Records[])Data.Clone();
+            for (int i = 0; i < copy.Length - 1; i++)
+            {
+                for (int pos = 0; pos < copy.Length - 1 - i; pos++)
+                {
+                    if (copy[pos + 1].Score > copy[pos].Score)
+                    {
+                        Records temp = copy[pos + 1];
+                        copy[pos + 1] = copy[pos];
+                        copy[pos] = temp;
+                    }
+                }
+            }
+
+            Console.WriteLine("===== TOP FIVE =====");
+            for (int i = 0; i < 5 && i < copy.Length; i++)
+                Console.WriteLine($"{i + 1}. {copy[i].Name} {copy[i].LastName}".PadRight(35) + $"${copy[i].Score}");
+            Pause();
         }
     }
 }
