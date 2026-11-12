@@ -261,8 +261,8 @@ namespace Wheel_of_Fortune
 
 
                         /*
-                        - https://www.geeksforgeeks.org/c-sharp/c-sharp-string-contains-method/
-                        - Uses the Contains method - checks if a string (guessedLetters) contains a spcific character (letter)
+                        - https://www.geeksforgeeks.org/c-sharp/c-sharp-string-contains-method/ - Uses the Contains method 
+                        - checks if a string (guessedLetters) contains a specific character (letter)
                         - and returns a boolean value (true or false)
                         */
                         if (guessedLetters.Contains(letter))
