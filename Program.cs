@@ -229,7 +229,6 @@ namespace Wheel_of_Fortune
             Console.WriteLine("Press [Enter] to spin the wheel...");
             Console.ReadLine();
 
-            int spin = wheel[rand.Next(wheel.Length)];
             while (!WordComplete(revealed))
             {
                 Console.Clear();
@@ -238,6 +237,7 @@ namespace Wheel_of_Fortune
                 Console.WriteLine($"\nLetters used: {guessedLetters}");
 
                 // Spin the wheel
+                int spin = wheel[rand.Next(wheel.Length)];
                 if (spin < 0)
                 {
                     score += spin;
