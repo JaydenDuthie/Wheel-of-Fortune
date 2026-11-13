@@ -129,6 +129,9 @@ namespace Wheel_of_Fortune
 
         static void Print(Records[] Data)
         {
+            Console.Clear();
+            Console.WriteLine($"{"Name",-23} {"Last Name",-23} {"Interest",-20} {"Score",10}");
+            Console.WriteLine(new string('-', 79));
             for (int count = 0; count < Data.Length; count++)
             {
                 Console.WriteLine($"{Data[count].Name.PadRight(23)} {Data[count].LastName.PadRight(23)} {Data[count].Interest.PadRight(20)} {Convert.ToString(Data[count].Score).PadLeft(10)}");
@@ -139,13 +142,14 @@ namespace Wheel_of_Fortune
 
         static void PickPeople(Records[] People, ref int PlayerIndex)
         {
+            Console.Clear();
             Random rand = new Random();
             int[] Finalists = new int[10];
             int temp;
             bool InArray;
 
-            Console.WriteLine("Generating the finalists...");
-            Console.ReadLine();
+            Console.WriteLine("Generating the finalists...\n\n");
+            Thread.Sleep(2000);
 
             for (int i = 0; i < Finalists.Length; i++)
             {
@@ -166,6 +170,9 @@ namespace Wheel_of_Fortune
                 }
             }
 
+            Console.WriteLine("The finalists are:\n");
+            Console.WriteLine($"{"Name",-15} Last Name");
+            Console.WriteLine(new string('-', 35));
             for (int i = 0; i < Finalists.Length; i++)
             {
                 Console.WriteLine($"{People[Finalists[i]].Name.PadRight(15)} {People[Finalists[i]].LastName}");
@@ -175,7 +182,9 @@ namespace Wheel_of_Fortune
 
             int PlayerTemp = rand.Next(Finalists.Length);
             PlayerIndex = Finalists[PlayerTemp];
-            Console.WriteLine($"{People[PlayerIndex].Name.PadRight(23)} {People[PlayerIndex].LastName.PadRight(23)} {People[PlayerIndex].Interest.PadRight(20)} {Convert.ToString(People[PlayerIndex].Score).PadLeft(10)}");
+            Console.WriteLine($"The player selected to play is: {People[PlayerIndex].Name} {People[PlayerIndex].LastName}");
+            Console.WriteLine($"Their current score is: {People[PlayerIndex].Score}");
+            Console.WriteLine($"Their interest is: {People[PlayerIndex].Interest}");
             Console.ReadLine ();
         }
 
@@ -209,6 +218,7 @@ namespace Wheel_of_Fortune
 
         static void PlayGame(Records[] Data, ref int PlayerIndex)
         {
+            Console.Clear();
             if (PlayerIndex == -1)
             {
                 Console.WriteLine("Select a player first (option 3).");
@@ -261,8 +271,8 @@ namespace Wheel_of_Fortune
 
 
                         /*
-                        - https://www.geeksforgeeks.org/c-sharp/c-sharp-string-contains-method/
-                        - Uses the Contains method - checks if a string (guessedLetters) contains a spcific character (letter)
+                        - https://www.geeksforgeeks.org/c-sharp/c-sharp-string-contains-method/     - Uses the Contains method 
+                        - checks if a string (guessedLetters) contains a spcific character (letter)
                         - and returns a boolean value (true or false)
                         */
                         if (guessedLetters.Contains(letter))
@@ -349,8 +359,9 @@ namespace Wheel_of_Fortune
             return count;
         }
 
-        static void TopFive(Records[] Data)
+        static void TopFive(Records[] Data) 
         {
+            Console.Clear();
             // Sort a copy by score (highest first) so the main array stays sorted by name
             Records[] copy = (Records[])Data.Clone();
             for (int i = 0; i < copy.Length - 1; i++)
