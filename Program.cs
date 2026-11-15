@@ -149,7 +149,7 @@ namespace Wheel_of_Fortune
             bool InArray;
 
             Console.WriteLine("Generating the finalists...\n\n");
-            Thread.Sleep(2000);
+            Thread.Sleep(1000);
 
             for (int i = 0; i < Finalists.Length; i++)
             {
@@ -180,8 +180,7 @@ namespace Wheel_of_Fortune
 
             Console.WriteLine("\n\n");
 
-            int PlayerTemp = rand.Next(Finalists.Length);
-            PlayerIndex = Finalists[PlayerTemp];
+            PlayerIndex = Finalists[rand.Next(Finalists.Length)];
             Console.WriteLine($"The player selected to play is: {People[PlayerIndex].Name} {People[PlayerIndex].LastName}");
             Console.WriteLine($"Their current score is: {People[PlayerIndex].Score}");
             Console.WriteLine($"Their interest is: {People[PlayerIndex].Interest}");
